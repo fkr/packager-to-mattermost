@@ -1,0 +1,6 @@
+[general]
+mattermost = "https://mattermost-server/hooks/hooktoken"
+channel = "town-square"
+username = "Happy Builder"
+iconurl = "https://example.com/usericon.png"
+listen = ":5050"
