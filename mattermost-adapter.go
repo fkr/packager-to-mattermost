@@ -86,6 +86,7 @@ func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 		io.Copy(os.Stdout, res.Body)
 
 		fmt.Fprintln(rw, string(retjs))
+		fmt.Println("")
 	}
 }
 
