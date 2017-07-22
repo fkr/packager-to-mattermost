@@ -49,6 +49,9 @@ func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 
 	case "POST":
 
+		request := fmt.Sprintf("Request from: %s\n", req.RemoteAddr)
+		fmt.Printf("%s\n", request)
+
 		dec := json.NewDecoder(req.Body)
 
 		packageJson := new(PackagerJson)
