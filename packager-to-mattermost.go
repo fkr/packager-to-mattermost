@@ -45,50 +45,46 @@ type MattermostJson struct {
 }
 
 func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
-	switch req.Method {
 
-	case "POST":
+	fmt.Printf("Request from: %s\n", req.RemoteAddr)
 
-		fmt.Printf("Request from: %s\n", req.RemoteAddr)
+	dec := json.NewDecoder(req.Body)
 
-		dec := json.NewDecoder(req.Body)
-
-		packageJson := new(PackagerJson)
-		err := dec.Decode(&packageJson)
-		if err != nil {
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		fmt.Println(packageJson)
-
-		retjs, err := json.Marshal(packageJson)
-		if err != nil {
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		text := fmt.Sprintf("build succeeded!\n[%s](%s) - Branch: %s - Tag: %s - %s\n%s - %s",
-																						    packageJson.Commit,
-																							packageJson.UpstreamURL,
-			                												                packageJson.Branch,
-																							packageJson.Tag,
-																							packageJson.Distribution,
-																							packageJson.PackageURL)
-
-		packageMattermost := MattermostJson{Channel: config.Channel, Username: config.Username,
-		                                    IconUrl: config.IconUrl,
-											Text: text}
-
-		payload := new(bytes.Buffer)
-		json.NewEncoder(payload).Encode(packageMattermost)
-		res, _ := http.Post(config.MattermostServer,
-			                "application/json; charset=utf-8", payload)
-		io.Copy(os.Stdout, res.Body)
-
-		fmt.Fprintln(rw, string(retjs))
-		fmt.Println("")
+	packageJson := new(PackagerJson)
+	err := dec.Decode(&packageJson)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	fmt.Println(packageJson)
+
+	retjs, err := json.Marshal(packageJson)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	text := fmt.Sprintf("build succeeded!\n[%s](%s) - Branch: %s - Tag: %s - %s\n%s - %s",
+																						packageJson.Commit,
+																						packageJson.UpstreamURL,
+																						packageJson.Branch,
+																						packageJson.Tag,
+																						packageJson.Distribution,
+																						packageJson.PackageURL)
+
+	packageMattermost := MattermostJson{Channel: config.Channel, Username: config.Username,
+										IconUrl: config.IconUrl,
+										Text: text}
+
+	payload := new(bytes.Buffer)
+	json.NewEncoder(payload).Encode(packageMattermost)
+	res, _ := http.Post(config.MattermostServer,
+						"application/json; charset=utf-8", payload)
+	io.Copy(os.Stdout, res.Body)
+
+	fmt.Fprintln(rw, string(retjs))
+	fmt.Println("")
 }
 
 var config AdapterConfig
