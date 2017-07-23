@@ -49,8 +49,7 @@ func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 
 	case "POST":
 
-		request := fmt.Sprintf("Request from: %s\n", req.RemoteAddr)
-		fmt.Printf("%s\n", request)
+		fmt.Printf("Request from: %s\n", req.RemoteAddr)
 
 		dec := json.NewDecoder(req.Body)
 
@@ -69,9 +68,11 @@ func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		text := fmt.Sprintf("build succeeded! Branch: %s - Tag: %s - %s - %s - %s", packageJson.Branch,
+		text := fmt.Sprintf("build succeeded!\n[%s](%s) - Branch: %s - Tag: %s - %s\n%s - %s",
+																						    packageJson.Commit,
+																							packageJson.UpstreamURL,
+			                												                packageJson.Branch,
 																							packageJson.Tag,
-																							packageJson.Commit,
 																							packageJson.Distribution,
 																							packageJson.PackageURL)
 
@@ -117,7 +118,6 @@ func main() {
 			config.IconUrl,
 		    config.Listen)
 	}
-
 
 	router := mux.NewRouter()
 	router.HandleFunc("/hook", HandlePackagerPost).Methods("POST")
