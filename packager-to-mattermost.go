@@ -46,7 +46,7 @@ type MattermostJson struct {
 
 func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 
-	fmt.Printf("Request from: %s\n", req.RemoteAddr)
+	log.Printf("Request from: %s", req.RemoteAddr)
 
 	dec := json.NewDecoder(req.Body)
 
@@ -57,7 +57,7 @@ func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(packageJson)
+	log.Print(packageJson)
 
 	retjs, err := json.Marshal(packageJson)
 	if err != nil {
@@ -84,7 +84,6 @@ func HandlePackagerPost(rw http.ResponseWriter, req *http.Request) {
 	io.Copy(os.Stdout, res.Body)
 
 	fmt.Fprintln(rw, string(retjs))
-	fmt.Println("")
 }
 
 var config AdapterConfig
@@ -96,7 +95,7 @@ func main() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Println("Config file not found or error parsing\n\n: %s", err)
+		log.Fatal("Config file not found or error parsing\n\n: %s", err)
 	} else {
 		config.Channel  = viper.GetString("general.channel")
 		config.Username = viper.GetString("general.username")
